@@ -1,5 +1,7 @@
+import path from "path";
 import {Field} from "../models/Field";
 import FieldModel from "../models/Field-model";
+import fs from 'fs'
 
 export async function addField(f:Field) {
     try{
@@ -18,12 +20,19 @@ export async function addField(f:Field) {
 
 export async function updateField(fieldName:string,f:Field) {
     try{
-        const updatedField = await FieldModel.updateOne(
+        const existingField = await FieldModel.findOne({fieldName: fieldName});
+
+        if(!existingField) {
+            console.log("Field not found");
+            return null;
+        }
+        const updatedField = await FieldModel.findOneAndUpdate(
         {fieldName:fieldName},
             {
-                location: f.location,
-                extentSize: f.extentSize,
-                fieldImage: f.fieldImage,
+                fieldName: f.fieldName || existingField.fieldName,
+                location: f.location || existingField.location,
+                extentSize: f.extentSize || existingField.extentSize,
+                fieldImage: f.fieldImage || existingField.fieldImage
             }
         )
         console.log("Updated field",updatedField);
@@ -35,6 +44,22 @@ export async function updateField(fieldName:string,f:Field) {
 
 export async function deleteField(fieldName:string) {
     try{
+        const existingField = await FieldModel.findOne({fieldName: fieldName});
+        if(!existingField) {
+            console.log("Field not found");
+            return null;
+        }
+
+        if(existingField.fieldImage){
+            const imagePath = path.join("uploads", existingField.fieldImage);
+            fs.unlink(imagePath, (err) => {
+                if(err){
+                    console.log("Error deleting image file",err);
+                }else{
+                    console.log("Deleted field",imagePath);
+                }
+            });
+        }
         await FieldModel.deleteOne(
             {fieldName:fieldName},
         )

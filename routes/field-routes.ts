@@ -1,8 +1,7 @@
 import express from "express";
 import multer from 'multer'
-import {addField, deleteField, updateField} from "../database/field-data-store";
+import {addField, deleteField, getAllFields, updateField} from "../database/field-data-store";
 import {Field} from "../models/Field";
-import FieldModel from "../models/Field-model";
 
 const router = express.Router();
 
@@ -31,30 +30,43 @@ router.post("/add", upload.single("fieldImage"), async (req, res) => {
     }
 })
 
-router.put("/update/:fieldName", upload.single("fieldImage"), async (req,res) => {
-    const fieldName:string = req.params.fieldName;
-
-    const existingField = await FieldModel.findOne({fieldName:fieldName});
-    if(!existingField){
-        return res.status(400).json({message: "Field not found"});
-    }
-    const field:Field = {
-        fieldName: req.body.fieldName || existingField.fieldName,
-
-        location: req.body.location || existingField.location,
-        extentSize: req.body.extentSize ? Number(req.body.extentSize) : existingField.extentSize,
-        fieldImage: req.file? req.file.filename : existingField.fieldImage
+router.put("/update/:fieldName", upload.single("fieldImage"),async (req,res) => {
+    const fieldName: string = req.params.fieldName;
+    const field: Field = {
+        fieldName: req.body.fieldName,
+        location: req.body.location,
+        extentSize: Number(req.body.extentSize),
+        fieldImage: req.file? req.file.filename : ""
     }
     try {
-        const updatedField = await updateField(fieldName,field);
+        const updatedField = await updateField(fieldName, field);
         res.json(updatedField);
-    }catch(err){
-        console.log("Error Updating field",err);
+    } catch (err) {
+        console.log("Error Updating field", err);
         res.status(400).send("Error updating field");
     }
 })
 
-router.delete("/delete/:fieldName",async (req,res)=>{
 
-}
+router.delete("/delete/:fieldName",async (req,res)=>{
+    const fieldName: string = req.params.fieldName;
+    try{
+        const deletedField = await deleteField(fieldName);
+        res.json(deletedField);
+    }catch (error){
+        console.log("Error deleting field",error);
+        res.status(400).send("Error deleting field");
+    }
+})
+
+router.get("/view",async (req,res) => {
+    try{
+        const fields = await getAllFields();
+        res.json(fields);
+    }catch(err){
+        console.log("Error getting all fields",err);
+        res.status(400).send("Error getting all fields");
+    }
+})
+
 export default router;
