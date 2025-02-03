@@ -1,6 +1,7 @@
 import express from "express";
 import {connectDB} from "./config/db";
 import fieldRoutes from "./routes/field-routes"
+import cropRoutes from "./routes/crop-routes"
 
 const app = express();
 const cors = require("cors");
@@ -12,6 +13,7 @@ connectDB();
 
 // routes
 app.use('/field', fieldRoutes);
+app.use('/crop', cropRoutes);
 
 
 app.listen(3000,(err) => {
