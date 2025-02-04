@@ -1,4 +1,4 @@
-enum EquipType {
+export enum EquipType {
     Electrical = 'Electrical',
     Mechanical = 'Mechanical',
 }

@@ -1,7 +1,9 @@
+import {Gender} from "../enums/Gender";
+
 export class Staff {
     name: string;
     designation: string;
-    gender: Gender
+    gender: Gender;
     joinedDate: Date;
     dob: Date;
     address: string;

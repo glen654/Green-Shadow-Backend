@@ -1,4 +1,6 @@
 import mongoose from "mongoose";
+import {EquipType} from "../enums/EquipType";
+import {Status} from "../enums/Status";
 
 const EquipSchema = new mongoose.Schema(
     {

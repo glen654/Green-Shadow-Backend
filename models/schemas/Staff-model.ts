@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import {Gender} from "../enums/Gender";
 
 const StaffSchema = new mongoose.Schema(
     {

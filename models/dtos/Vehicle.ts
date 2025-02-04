@@ -1,3 +1,6 @@
+import {FuelType} from "../enums/Fuel";
+import {Status} from "../enums/Status";
+
 export class Vehicle {
     licensePlateNumber: string;
     category: string;

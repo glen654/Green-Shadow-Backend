@@ -1,4 +1,6 @@
 import mongoose from "mongoose";
+import {FuelType} from "../enums/Fuel";
+import {Status} from "../enums/Status";
 
 const VehicleSchema = new mongoose.Schema(
     {

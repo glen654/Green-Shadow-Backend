@@ -1,3 +1,6 @@
+import {EquipType} from "../enums/EquipType";
+import {Status} from "../enums/Status";
+
 export class Equipment {
     equipName: string;
     equipType: EquipType;
