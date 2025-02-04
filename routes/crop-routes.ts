@@ -1,17 +1,10 @@
 import express from "express";
 import multer from "multer";
-import {Crop} from "../models/Crop";
+import {Crop} from "../models/dtos/Crop";
 import {addCrop, deleteCrop, getAllCropNames, getAllCrops, updateCrop} from "../database/crop-data-store";
+import {storage} from "../util/Storage";
 
 const router = express.Router();
-
-const storage = multer.diskStorage({
-    destination: "uploads",
-    filename: (req, file, cb) => {
-        return cb(null, `${Date.now()}${file.originalname}`);
-    },
-});
-
 
 const upload = multer({ storage: storage });
 

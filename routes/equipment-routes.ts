@@ -1,5 +1,5 @@
 import express from "express";
-import {Equipment} from "../models/Equipment";
+import {Equipment} from "../models/dtos/Equipment";
 import {addEquipment, deleteEquipment, getAllEquipment, updateEquipment} from "../database/equip-data-store";
 import e from "express";
 

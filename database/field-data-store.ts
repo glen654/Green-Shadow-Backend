@@ -1,6 +1,6 @@
 import path from "path";
-import {Field} from "../models/Field";
-import FieldModel from "../models/Field-model";
+import {Field} from "../models/dtos/Field";
+import FieldModel from "../models/schemas/Field-model";
 import fs from 'fs'
 
 export async function addField(f:Field) {

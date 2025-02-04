@@ -1,5 +1,5 @@
-import {Crop} from "../models/Crop";
-import CropModel from "../models/Crop-model";
+import {Crop} from "../models/dtos/Crop";
+import CropModel from "../models/schemas/Crop-model";
 import path from "path";
 import fs from 'fs'
 

@@ -1,5 +1,5 @@
-import {Equipment} from "../models/Equipment";
-import EquipmentModel from "../models/Equipment-model";
+import {Equipment} from "../models/dtos/Equipment";
+import EquipmentModel from "../models/schemas/Equipment-model";
 
 export async function addEquipment(e:Equipment){
     try {

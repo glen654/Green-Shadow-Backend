@@ -1,17 +1,11 @@
 import express from "express";
 import multer from "multer";
-import {Log} from "../models/Log";
+import {Log} from "../models/dtos/Log";
 import {addLog, deleteLog, getAllLogs, updateLog} from "../database/log-data-store";
 import exp from "node:constants";
+import {storage} from "../util/Storage";
 
 const router = express.Router();
-
-const storage = multer.diskStorage({
-    destination: "uploads",
-    filename: (req, file, cb) => {
-        return cb(null, `${Date.now()}${file.originalname}`);
-    },
-});
 
 const upload = multer({ storage: storage });
 

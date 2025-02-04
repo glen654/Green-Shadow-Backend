@@ -1,5 +1,5 @@
 import express from "express";
-import {Staff} from "../models/Staff";
+import {Staff} from "../models/dtos/Staff";
 import {addStaff, deleteStaff, getAllStaff, getAllStaffNames, updateStaff} from "../database/staff-data-store";
 
 const router = express.Router();

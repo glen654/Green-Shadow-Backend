@@ -1,16 +1,10 @@
 import express from "express";
 import multer from 'multer'
 import {addField, deleteField, getAllFieldNames, getAllFields, updateField} from "../database/field-data-store";
-import {Field} from "../models/Field";
+import {Field} from "../models/dtos/Field";
+import {storage} from "../util/Storage";
 
 const router = express.Router();
-
-const storage = multer.diskStorage({
-    destination: "uploads",
-    filename: (req, file, cb) => {
-        return cb(null, `${Date.now()}${file.originalname}`);
-    },
-});
 
 const upload = multer({ storage: storage });
 

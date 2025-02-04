@@ -1,6 +1,6 @@
-import {Vehicle} from "../models/Vehicle";
-import VehicleModel from "../models/Vehicle-model";
-import vehicleModel from "../models/Vehicle-model";
+import {Vehicle} from "../models/dtos/Vehicle";
+import VehicleModel from "../models/schemas/Vehicle-model";
+import vehicleModel from "../models/schemas/Vehicle-model";
 
 export async function addVehicle(v:Vehicle){
     try{

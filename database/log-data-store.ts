@@ -1,8 +1,8 @@
-import {Log} from "../models/Log";
-import LogModel from "../models/Log-model";
+import {Log} from "../models/dtos/Log";
+import LogModel from "../models/schemas/Log-model";
 import path from "path";
 import fs from "fs";
-import CropModel from "../models/Crop-model";
+import CropModel from "../models/schemas/Crop-model";
 
 export async function addLog(l:Log){
     try{

@@ -1,5 +1,5 @@
 import express from "express";
-import {Vehicle} from "../models/Vehicle";
+import {Vehicle} from "../models/dtos/Vehicle";
 import {addVehicle, deleteVehicle, getAllVehicles, updateVehicle} from "../database/vehicle-data-store";
 
 const router = express.Router();

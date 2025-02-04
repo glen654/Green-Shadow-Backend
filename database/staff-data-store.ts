@@ -1,5 +1,5 @@
-import {Staff} from "../models/Staff";
-import StaffModel from "../models/Staff-model";
+import {Staff} from "../models/dtos/Staff";
+import StaffModel from "../models/schemas/Staff-model";
 
 export async function addStaff(s:Staff){
     try{
