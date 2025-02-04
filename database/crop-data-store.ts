@@ -78,3 +78,12 @@ export async function getAllCrops(){
         console.log("Error getting crop data from the database", error);
     }
 }
+
+export async function getAllCropNames(){
+    try{
+        const cropNames = await CropModel.find({}, "commonName");
+        return cropNames.map(crop => crop.commonName);
+    }catch (error){
+        console.log("Error getting crop names",error);
+    }
+}

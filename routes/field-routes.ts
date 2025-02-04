@@ -1,6 +1,6 @@
 import express from "express";
 import multer from 'multer'
-import {addField, deleteField, getAllFields, updateField} from "../database/field-data-store";
+import {addField, deleteField, getAllFieldNames, getAllFields, updateField} from "../database/field-data-store";
 import {Field} from "../models/Field";
 
 const router = express.Router();
@@ -66,6 +66,16 @@ router.get("/view",async (req,res) => {
     }catch(err){
         console.log("Error getting all fields",err);
         res.status(400).send("Error getting all fields");
+    }
+})
+
+router.get("/fields",async (req,res)=> {
+    try{
+        const fieldNames = await getAllFieldNames();
+        res.json(fieldNames);
+    }catch (error){
+        console.log("Error getting field Names",error);
+        res.status(400).send("Error getting field names");
     }
 })
 

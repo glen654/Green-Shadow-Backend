@@ -1,7 +1,7 @@
 import express from "express";
 import multer from "multer";
 import {Crop} from "../models/Crop";
-import {addCrop, deleteCrop, getAllCrops, updateCrop} from "../database/crop-data-store";
+import {addCrop, deleteCrop, getAllCropNames, getAllCrops, updateCrop} from "../database/crop-data-store";
 
 const router = express.Router();
 
@@ -68,6 +68,16 @@ router.get("/view",async (req,res) => {
     }catch(err){
         console.log("Error getting all crops",err);
         res.status(400).send("Error getting all crops");
+    }
+})
+
+router.get("/crops",async (req,res) => {
+    try{
+        const cropNames = await getAllCropNames();
+        res.json(cropNames);
+    }catch(err){
+        console.log("Error getting crop names",err);
+        res.status(400).send("Error getting crop names");
     }
 })
 

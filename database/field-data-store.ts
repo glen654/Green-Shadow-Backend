@@ -77,3 +77,12 @@ export async function getAllFields() {
         console.log("Error getting field from the database",error);
     }
 }
+
+export async function getAllFieldNames(){
+    try {
+        const fieldNames = await FieldModel.find({}, "fieldName");
+        return fieldNames.map(field => field.fieldName);
+    }catch (error){
+        console.log("Error getting field names",error);
+    }
+}

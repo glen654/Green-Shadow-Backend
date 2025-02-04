@@ -23,7 +23,7 @@ router.post("/add",async (req, res) => {
 })
 
 router.put("/update/:licenseNumber",async (req,res) => {
-    const licenseNumber: string = req.params.licenseNumber
+    const licenseNumber: string = req.params.licenseNumber;
     const vehicle:Vehicle = {
         licensePlateNumber: req.body.licensePlateNumber,
         category: req.body.category,

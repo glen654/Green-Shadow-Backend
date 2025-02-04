@@ -76,3 +76,12 @@ export async function getAllStaff(){
         console.log("Error getting staff details from the database",error);
     }
 }
+
+export async function getAllStaffNames(){
+    try {
+        const staffNames = await StaffModel.find({}, "name");
+        return staffNames.map(staff => staff.name);
+    }catch (error){
+        console.log("Error getting staff names",error);
+    }
+}

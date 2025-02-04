@@ -1,6 +1,6 @@
 import express from "express";
 import {Staff} from "../models/Staff";
-import {addStaff, deleteStaff, getAllStaff, updateStaff} from "../database/staff-data-store";
+import {addStaff, deleteStaff, getAllStaff, getAllStaffNames, updateStaff} from "../database/staff-data-store";
 
 const router = express.Router();
 
@@ -65,6 +65,16 @@ router.get("/view",async (req,res)=> {
     }catch(err){
         console.log("Error getting all staff members",err);
         res.status(400).send("Error getting all  staff members");
+    }
+})
+
+router.get("/staff",async (req,res)=> {
+    try{
+        const staffNames = await getAllStaffNames();
+        res.json(staffNames);
+    }catch (error){
+        console.log("Error getting staff names",error);
+        res.status(400).send("Error getting staff names");
     }
 })
 
