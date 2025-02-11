@@ -3,17 +3,22 @@ import multer from 'multer'
 import {addField, deleteField, getAllFieldNames, getAllFields, updateField} from "../database/field-data-store";
 import {Field} from "../models/dtos/Field";
 import {storage} from "../util/Storage";
+import FieldModel from "../models/schemas/Field-model";
 
 const router = express.Router();
 
 const upload = multer({ storage: storage });
 
 router.post("/add", upload.single("fieldImage"), async (req, res) => {
+    let fieldImage: string | undefined = undefined;
+    if(req.file){
+        fieldImage = `/uploads/${req.file.filename}`;
+    }
     const field:Field = {
         fieldName: req.body.fieldName,
         location: req.body.location,
         extentSize: Number(req.body.extentSize),
-        fieldImage: req.file? req.file.filename : ""
+        fieldImage: fieldImage
     };
     try{
         const addedField = await addField(field);
@@ -26,11 +31,15 @@ router.post("/add", upload.single("fieldImage"), async (req, res) => {
 
 router.put("/update/:fieldName", upload.single("fieldImage"),async (req,res) => {
     const fieldName: string = req.params.fieldName;
+    let fieldImage: string | undefined = undefined;
+    if(req.file){
+        fieldImage = `/uploads/${req.file.filename}`;
+    }
     const field: Field = {
         fieldName: req.body.fieldName,
         location: req.body.location,
         extentSize: Number(req.body.extentSize),
-        fieldImage: req.file? req.file.filename : ""
+        fieldImage: fieldImage
     }
     try {
         const updatedField = await updateField(fieldName, field);

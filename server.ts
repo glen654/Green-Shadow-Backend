@@ -6,6 +6,7 @@ import staffRoutes from "./routes/staff-routes"
 import logRoutes from "./routes/log-routes"
 import vehicleRoutes from "./routes/vehicle-routes"
 import equipmentRoutes from "./routes/equipment-routes";
+import path from "path";
 
 const app = express();
 const cors = require("cors");
@@ -22,6 +23,7 @@ app.use('/staff', staffRoutes);
 app.use('/log',logRoutes);
 app.use('/vehicle',vehicleRoutes);
 app.use('/equipment',equipmentRoutes);
+app.use('/uploads',express.static(path.join(__dirname, "uploads")))
 
 app.listen(3000,(err) => {
     console.log("Server running on port 3000");

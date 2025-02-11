@@ -2,7 +2,7 @@ export class Crop{
     commonName: string;
     scientificName: string;
     category: string;
-    cropImage: string;
+    cropImage: string | undefined;
     fieldName: string;
 
     constructor(commonName:string,scientificName:string,category:string,cropImage:string,fieldName:string) {

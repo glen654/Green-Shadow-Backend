@@ -2,7 +2,7 @@ export class Field {
     fieldName : string;
     location : string;
     extentSize: number;
-    fieldImage : string;
+    fieldImage : string | undefined;
 
     constructor(fieldName: string, location: string, extentSize: number, fieldImage: string) {
         this.fieldName = fieldName;

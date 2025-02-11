@@ -1,7 +1,7 @@
 export class Log {
     logName: string;
     logDate: Date;
-    logImage: string;
+    logImage: string | undefined;
     fieldName: string;
     cropName: string;
     staffMember: string;

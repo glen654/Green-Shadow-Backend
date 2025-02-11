@@ -2,7 +2,6 @@ import express from "express";
 import multer from "multer";
 import {Log} from "../models/dtos/Log";
 import {addLog, deleteLog, getAllLogs, updateLog} from "../database/log-data-store";
-import exp from "node:constants";
 import {storage} from "../util/Storage";
 
 const router = express.Router();
@@ -10,10 +9,14 @@ const router = express.Router();
 const upload = multer({ storage: storage });
 
 router.post("/add", upload.single("logImage"),async (req,res) => {
+    let logImage: string | undefined = undefined;
+    if(req.file){
+        logImage = `/uploads/${req.file.filename}`;
+    }
     const log:Log = {
         logName: req.body.logName,
         logDate: new Date(req.body.logDate),
-        logImage: req.file? req.file.filename : "",
+        logImage: logImage,
         fieldName: req.body.fieldName,
         cropName: req.body.cropName,
         staffMember: req.body.staffMember
@@ -29,10 +32,14 @@ router.post("/add", upload.single("logImage"),async (req,res) => {
 
 router.put("/update/:logName", upload.single("logName"),async (req,res)=> {
     const logName: string = req.params.logName;
+    let logImage: string | undefined = undefined;
+    if(req.file){
+        logImage = `/uploads/monlog/${req.file.filename}`;
+    }
     const log:Log = {
         logName: req.body.logName,
         logDate: new Date(req.body.logDate),
-        logImage: req.file? req.file.filename : "",
+        logImage: logImage,
         fieldName: req.body.fieldName,
         cropName: req.body.cropName,
         staffMember: req.body.staffMember

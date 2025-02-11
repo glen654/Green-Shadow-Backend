@@ -9,11 +9,15 @@ const router = express.Router();
 const upload = multer({ storage: storage });
 
 router.post("/add",upload.single("cropImage"), async (req, res) => {
+    let cropImage: string | undefined = undefined;
+    if(req.file){
+        cropImage = `/uploads/${req.file.filename}`;
+    }
     const crop:Crop = {
         commonName: req.body.commonName,
         scientificName: req.body.scientificName,
         category: req.body.category,
-        cropImage: req.file? req.file.filename : "",
+        cropImage: cropImage,
         fieldName: req.body.fieldName
     };
     try{
@@ -27,11 +31,15 @@ router.post("/add",upload.single("cropImage"), async (req, res) => {
 
 router.put("/update/:commonName",upload.single("cropImage"),async (req,res) => {
     const commonName: string = req.params.commonName;
+    let cropImage: string | undefined = undefined;
+    if(req.file){
+        cropImage = `/uploads/crop/${req.file.path}`;
+    }
     const crop:Crop = {
         commonName: req.body.commonName,
         scientificName: req.body.scientificName,
         category: req.body.category,
-        cropImage: req.file? req.file.filename : "",
+        cropImage: cropImage,
         fieldName: req.body.fieldName
     };
     try{
