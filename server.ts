@@ -23,7 +23,7 @@ app.use('/staff', staffRoutes);
 app.use('/log',logRoutes);
 app.use('/vehicle',vehicleRoutes);
 app.use('/equipment',equipmentRoutes);
-app.use('/uploads',express.static(path.join(__dirname, "uploads")))
+app.use('/images',express.static("uploads"));
 
 app.listen(3000,(err) => {
     console.log("Server running on port 3000");
