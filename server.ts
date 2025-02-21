@@ -6,24 +6,27 @@ import staffRoutes from "./routes/staff-routes"
 import logRoutes from "./routes/log-routes"
 import vehicleRoutes from "./routes/vehicle-routes"
 import equipmentRoutes from "./routes/equipment-routes";
-import path from "path";
+import UserRoutes from "./routes/user-routes";
+import dotenv from "dotenv";
 
 const app = express();
 const cors = require("cors");
 app.use(express.json());
 app.use(cors());
+dotenv.config()
 
 // DB Connection
 connectDB();
 
 // routes
+app.use('/user', UserRoutes);
 app.use('/field', fieldRoutes);
 app.use('/crop', cropRoutes);
 app.use('/staff', staffRoutes);
 app.use('/log',logRoutes);
 app.use('/vehicle',vehicleRoutes);
 app.use('/equipment',equipmentRoutes);
-app.use('/images',express.static("uploads"));
+app.use('/uploads',express.static("uploads"));
 
 app.listen(3000,(err) => {
     console.log("Server running on port 3000");
