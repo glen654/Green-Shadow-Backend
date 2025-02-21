@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.post('/login',async (req ,res) => {
     const user: User = {
-        userName: req.body.username,
+        userName: req.body.userName,
         userEmail: req.body.userEmail,
         password: req.body.password
     }
@@ -15,11 +15,9 @@ router.post('/login',async (req ,res) => {
     try{
         const isVerified = await verifyUser(user);
         if(isVerified){
-            console.log('Loaded SECRET_ACCESS_TOKEN:', process.env.SECRET_ACCESS_TOKEN);
-            console.log('User email:', user.userEmail);
             const access_token = jwt.sign(
                 {userEmail: user.userEmail},
-                process.env["SECRET_ACCESS_TOKEN "] as string,
+                process.env.SECRET_ACCESS_TOKEN  as string,
                 {expiresIn: "1h"}
             );
             res.status(200).send({access_token})
@@ -41,6 +39,16 @@ router.post('/register',async (req ,res) => {
 
     try {
         const newUser = await registerUser(user);
+        if(newUser){
+            const access_token = jwt.sign(
+                {userEmail: user.userEmail},
+                process.env.SECRET_ACCESS_TOKEN  as string,
+                {expiresIn: "1h"}
+            );
+            res.status(200).send({access_token})
+        }else{
+            res.status(400).send("User already exists or invalid data");
+        }
         res.status(200).json(newUser);
     }catch (error){
         console.log(error);
