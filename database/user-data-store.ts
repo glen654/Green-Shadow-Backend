@@ -1,14 +1,18 @@
+import { PrismaClient } from "@prisma/client";
 import {User} from "../models/dtos/User";
-import UserModel from "../models/schemas/User-model";
 import bcrypt from 'bcrypt'
+
+const prisma = new PrismaClient();
 
 export async function registerUser(u:User){
     const hashPassword = await bcrypt.hash(u.password, 10);
     try{
-        const newUser = await UserModel.create({
-            userName: u.userName,
-            userEmail: u.userEmail,
-            password: hashPassword,
+        const newUser = await prisma.user.create({
+            data:{
+                userName: u.userName,
+                userEmail: u.userEmail,
+                password: hashPassword,
+            }
         })
         return newUser;
     }catch(err){
@@ -18,7 +22,9 @@ export async function registerUser(u:User){
 
 export async function verifyUser(u:User){
     try{
-        const user = await UserModel.findOne({userEmail: u.userEmail});
+        const user = await prisma.user.findUnique({
+            where:{userEmail: u.userEmail}
+        });
         if(!user){
             throw new Error("User does not exist");
         }

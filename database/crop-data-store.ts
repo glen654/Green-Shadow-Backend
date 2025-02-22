@@ -1,16 +1,21 @@
 import {Crop} from "../models/dtos/Crop";
-import CropModel from "../models/schemas/Crop-model";
 import path from "path";
 import fs from 'fs'
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 export async function addCrop(c:Crop){
     try{
-        const newCrop = await CropModel.create({
-            commonName: c.commonName,
-            scientificName: c.scientificName,
-            category: c.category,
-            cropImage: c.cropImage,
-            fieldName: c.fieldName,
+        const newCrop = await prisma.crop.create({
+            data:{
+                commonName: c.commonName,
+                scientificName: c.scientificName,
+                category: c.category,
+                cropImage: c.cropImage,
+                fieldName: c.fieldName,
+            }
+
         })
         console.log("Crop added", newCrop);
         return newCrop;
@@ -21,22 +26,24 @@ export async function addCrop(c:Crop){
 
 export async function updateCrop(commonName: string,c:Crop){
     try{
-        const existingCrop = await CropModel.findOne({commonName: commonName});
+        const existingCrop = await prisma.crop.findUnique({
+            where: {commonName: commonName}
+        });
         if(!existingCrop){
             console.log("Crop not found");
             return null;
         }
 
-        const updatedCrop = await CropModel.findOneAndUpdate(
-            {commonName: commonName},
-            {
+        const updatedCrop = await prisma.crop.update({
+            where:{commonName: commonName},
+            data:{
                 commonName: c.commonName || existingCrop.commonName,
                 scientificName: c.scientificName || existingCrop.scientificName,
                 category: c.category || existingCrop.category,
                 cropImage: c.cropImage || existingCrop.cropImage,
                 fieldName: c.fieldName || existingCrop.fieldName
-            }
-        )
+            },
+        })
         console.log("Crop updated", updatedCrop);
         return updatedCrop;
     }catch(err){
@@ -46,7 +53,9 @@ export async function updateCrop(commonName: string,c:Crop){
 
 export async function deleteCrop(commonName:string){
     try{
-        const existingCrop = await CropModel.findOne({commonName: commonName});
+        const existingCrop = await prisma.crop.findUnique({
+            where: {commonName: commonName}
+        });
         if(!existingCrop) {
             console.log("Crop not found");
             return null;
@@ -61,9 +70,9 @@ export async function deleteCrop(commonName:string){
                 }
             });
         }
-        await CropModel.deleteOne(
-            {commonName: commonName},
-        )
+        await prisma.crop.delete({
+            where: {commonName: commonName},
+        })
         console.log("Delete Crop",commonName);
         return commonName;
     }catch(err){
@@ -73,7 +82,7 @@ export async function deleteCrop(commonName:string){
 
 export async function getAllCrops(){
     try{
-        return CropModel.find();
+        return prisma.crop.findMany();
     }catch (error){
         console.log("Error getting crop data from the database", error);
     }
@@ -81,7 +90,11 @@ export async function getAllCrops(){
 
 export async function getAllCropNames(){
     try{
-        const cropNames = await CropModel.find({}, "commonName");
+        const cropNames = await prisma.crop.findMany({
+            select: {
+                commonName: true
+            }
+        });
         return cropNames.map(crop => crop.commonName);
     }catch (error){
         console.log("Error getting crop names",error);

@@ -1,16 +1,19 @@
+import { PrismaClient } from "@prisma/client";
 import {Vehicle} from "../models/dtos/Vehicle";
-import VehicleModel from "../models/schemas/Vehicle-model";
-import vehicleModel from "../models/schemas/Vehicle-model";
+
+const prisma = new PrismaClient();
 
 export async function addVehicle(v:Vehicle){
     try{
-        const newVehicle = await VehicleModel.create({
-            licensePlateNumber: v.licensePlateNumber,
-            category: v.category,
-            fuelType: v.fuelType,
-            status: v.status,
-            remarks: v.remarks,
-            staffMember: v.staffMember,
+        const newVehicle = await prisma.vehicle.create({
+            data:{
+                licensePlateNumber: v.licensePlateNumber,
+                category: v.category,
+                fuelType: v.fuelType,
+                status: v.status,
+                remarks: v.remarks,
+                staffMember: v.staffMember,
+            }
         })
         console.log("Vehicle added successfully.",newVehicle);
         return newVehicle;
@@ -21,23 +24,25 @@ export async function addVehicle(v:Vehicle){
 
 export async function updateVehicle(licenseNumber:string,v:Vehicle){
     try{
-        const existingVehicle = await VehicleModel.findOne({licensePlateNumber: licenseNumber});
+        const existingVehicle = await prisma.vehicle.findUnique({
+            where:{licensePlateNumber: licenseNumber}
+        });
 
         if(!existingVehicle){
             console.log("Vehicle not found");
             return null;
         }
-        const updatedVehicle = await vehicleModel.findOneAndUpdate(
-            {licensePlateNumber: licenseNumber},
-            {
+        const updatedVehicle = await prisma.vehicle.update({
+            where: {licensePlateNumber: licenseNumber},
+            data: {
                 licensePlateNumber: v.licensePlateNumber || existingVehicle.licensePlateNumber,
                 category: v.category || existingVehicle.category,
                 fuelType: v.fuelType || existingVehicle.fuelType,
                 status: v.status || existingVehicle.status,
                 remarks: v.remarks || existingVehicle.remarks,
                 staffMember: v.staffMember || existingVehicle.staffMember
-            }
-        )
+            },
+        })
         console.log("Vehicle updated",updatedVehicle);
         return updatedVehicle;
     }catch (error){
@@ -47,15 +52,17 @@ export async function updateVehicle(licenseNumber:string,v:Vehicle){
 
 export async function deleteVehicle(licenseNumber:string){
     try{
-        const existingVehicle = await VehicleModel.findOne({licensePlateNumber: licenseNumber});
+        const existingVehicle = await prisma.vehicle.findUnique({
+            where:{licensePlateNumber: licenseNumber}
+        });
 
         if(!existingVehicle){
             console.log("Vehicle not found");
             return null;
         }
-        await VehicleModel.deleteOne(
-            {licensePlateNumber: licenseNumber}
-        );
+        await prisma.vehicle.delete({
+            where: {licensePlateNumber: licenseNumber}
+        });
         console.log("Vehicle deleted",licenseNumber);
         return licenseNumber;
     }catch (error){
@@ -65,7 +72,7 @@ export async function deleteVehicle(licenseNumber:string){
 
 export async function getAllVehicles(){
     try{
-        return VehicleModel.find();
+        return prisma.vehicle.findMany();
     }catch (error){
         console.log("Error getting vehicles data from the DB",error);
     }

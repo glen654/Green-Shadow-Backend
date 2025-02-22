@@ -1,15 +1,19 @@
 import path from "path";
 import {Field} from "../models/dtos/Field";
-import FieldModel from "../models/schemas/Field-model";
 import fs from 'fs'
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 export async function addField(f:Field) {
     try{
-        const newField = await FieldModel.create({
-            fieldName: f.fieldName,
-            location: f.location,
-            extentSize: f.extentSize,
-            fieldImage: f.fieldImage,
+        const newField = await prisma.field.create({
+            data:{
+                fieldName: f.fieldName,
+                location: f.location,
+                extentSize: f.extentSize,
+                fieldImage: f.fieldImage,
+            }
         })
         console.log("Field Added", newField);
         return newField;
@@ -20,21 +24,23 @@ export async function addField(f:Field) {
 
 export async function updateField(fieldName:string,f:Field) {
     try{
-        const existingField = await FieldModel.findOne({fieldName: fieldName});
+        const existingField = await prisma.field.findUnique({
+             where:{fieldName: fieldName}
+        });
 
         if(!existingField) {
             console.log("Field not found");
             return null;
         }
-        const updatedField = await FieldModel.findOneAndUpdate(
-        {fieldName:fieldName},
-            {
+        const updatedField = await prisma.field.update({
+            where: {fieldName: fieldName},
+            data: {
                 fieldName: f.fieldName || existingField.fieldName,
                 location: f.location || existingField.location,
                 extentSize: f.extentSize || existingField.extentSize,
                 fieldImage: f.fieldImage || existingField.fieldImage
-            }
-        )
+            },
+        })
         console.log("Updated field",updatedField);
         return updatedField;
     }catch (error){
@@ -44,7 +50,9 @@ export async function updateField(fieldName:string,f:Field) {
 
 export async function deleteField(fieldName:string) {
     try{
-        const existingField = await FieldModel.findOne({fieldName: fieldName});
+        const existingField = await prisma.field.findUnique({
+            where:{fieldName: fieldName}
+        });
         if(!existingField) {
             console.log("Field not found");
             return null;
@@ -60,9 +68,9 @@ export async function deleteField(fieldName:string) {
                 }
             });
         }
-        await FieldModel.deleteOne(
-            {fieldName:fieldName},
-        )
+        await prisma.field.delete({
+            where: {fieldName: fieldName},
+        })
         console.log("Deleted field",fieldName);
         return fieldName;
     }catch (error){
@@ -72,7 +80,7 @@ export async function deleteField(fieldName:string) {
 
 export async function getAllFields() {
     try{
-        return FieldModel.find();
+        return prisma.field.findMany();
     }catch (error){
         console.log("Error getting field from the database",error);
     }
@@ -80,7 +88,11 @@ export async function getAllFields() {
 
 export async function getAllFieldNames(){
     try {
-        const fieldNames = await FieldModel.find({}, "fieldName");
+        const fieldNames = await prisma.field.findMany({
+            select: {
+                fieldName: true
+            }
+        });
         return fieldNames.map(field => field.fieldName);
     }catch (error){
         console.log("Error getting field names",error);

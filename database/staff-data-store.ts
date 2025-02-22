@@ -1,18 +1,22 @@
+import { PrismaClient } from "@prisma/client";
 import {Staff} from "../models/dtos/Staff";
-import StaffModel from "../models/schemas/Staff-model";
+
+const prisma = new PrismaClient();
 
 export async function addStaff(s:Staff){
     try{
-        const newStaffMember = await StaffModel.create({
-            name: s.name,
-            designation: s.designation,
-            gender: s.gender,
-            joinedDate: s.joinedDate,
-            dob: s.dob,
-            address: s.address,
-            contact: s.contact,
-            email: s.email,
-            fieldName: s.fieldName,
+        const newStaffMember = await prisma.staff.create({
+            data:{
+                name: s.name,
+                designation: s.designation,
+                gender: s.gender,
+                joinedDate: s.joinedDate,
+                dob: s.dob,
+                address: s.address,
+                contact: s.contact,
+                email: s.email,
+                fieldName: s.fieldName,
+            }
         })
         console.log("Staff member added",newStaffMember);
         return newStaffMember;
@@ -23,15 +27,17 @@ export async function addStaff(s:Staff){
 
 export async function updateStaff(name:string,s:Staff){
     try{
-        const existingStaffMember = await StaffModel.findOne({name: name});
+        const existingStaffMember = await prisma.staff.findUnique({
+            where:{name: name}
+        });
 
         if(!existingStaffMember){
             console.log("Staff not found");
             return null;
         }
-        const updatedStaffMember = await StaffModel.findOneAndUpdate(
-            {name: name},
-            {
+        const updatedStaffMember = await prisma.staff.update({
+            where: {name: name},
+            data: {
                 name: s.name || existingStaffMember.name,
                 designation: s.designation || existingStaffMember.designation,
                 gender: s.gender || existingStaffMember.gender,
@@ -41,8 +47,8 @@ export async function updateStaff(name:string,s:Staff){
                 contact: s.contact || existingStaffMember.contact,
                 email: s.email || existingStaffMember.email,
                 fieldName: s.fieldName || existingStaffMember.fieldName
-            }
-        )
+            },
+        })
         console.log("Updated Staff Member",updatedStaffMember);
         return updatedStaffMember;
     }catch(err){
@@ -52,16 +58,18 @@ export async function updateStaff(name:string,s:Staff){
 
 export async function deleteStaff(name:string){
     try{
-        const existingStaffMember = await StaffModel.findOne({name: name});
+        const existingStaffMember = await prisma.staff.findUnique({
+            where:{name: name}
+        });
 
         if(!existingStaffMember){
             console.log("Staff not found");
             return null;
         }
 
-        await StaffModel.deleteOne(
-            {name: name}
-        );
+        await prisma.staff.delete({
+            where: {name: name}
+        });
         console.log("Deleted staff member",name);
         return name;
     }catch (err){
@@ -71,7 +79,7 @@ export async function deleteStaff(name:string){
 
 export async function getAllStaff(){
     try{
-        return StaffModel.find();
+        return prisma.staff.findMany();
     }catch (error){
         console.log("Error getting staff details from the database",error);
     }
@@ -79,7 +87,11 @@ export async function getAllStaff(){
 
 export async function getAllStaffNames(){
     try {
-        const staffNames = await StaffModel.find({}, "name");
+        const staffNames = await prisma.staff.findMany({
+            select: {
+                name: true
+            }
+        });
         return staffNames.map(staff => staff.name);
     }catch (error){
         console.log("Error getting staff names",error);

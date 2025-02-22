@@ -1,14 +1,19 @@
+import {PrismaClient} from "@prisma/client";
 import {Equipment} from "../models/dtos/Equipment";
-import EquipmentModel from "../models/schemas/Equipment-model";
+
+const prisma = new PrismaClient();
 
 export async function addEquipment(e:Equipment){
     try {
-        const newEquipment = await EquipmentModel.create({
-            equipName: e.equipName,
-            equipType: e.equipType,
-            status: e.status,
-            staffMember: e.staffMember,
-            fieldName: e.fieldName,
+        const newEquipment = await prisma.equipment.create({
+            data:{
+                equipName: e.equipName,
+                equipType: e.equipType,
+                status: e.status,
+                staffMember: e.staffMember,
+                fieldName: e.fieldName,
+            }
+
         })
         console.log("Equipment added successfully",newEquipment);
         return newEquipment;
@@ -19,22 +24,24 @@ export async function addEquipment(e:Equipment){
 
 export async function updateEquipment(equipName:string,e:Equipment){
     try{
-        const existingEquipment = await EquipmentModel.findOne({equipName: equipName});
+        const existingEquipment = await prisma.equipment.findUnique({
+            where: {equipName: equipName}
+        });
 
         if(!existingEquipment){
             console.log("Equipment not found");
             return null;
         }
-        const updatedEquipment = await EquipmentModel.findOneAndUpdate(
-            {equipName: equipName},
-            {
+        const updatedEquipment = await prisma.equipment.update({
+            where: {equipName: equipName},
+            data: {
                 equipName: e.equipName || existingEquipment.equipName,
                 equipType: e.equipType || existingEquipment.equipType,
                 status: e.status || existingEquipment.status,
                 staffMember: e.staffMember || existingEquipment.staffMember,
                 fieldName: e.fieldName || existingEquipment.fieldName
-            }
-        )
+            },
+        })
         console.log("Equipment updated",updatedEquipment);
         return updatedEquipment;
     }catch (error){
@@ -44,15 +51,17 @@ export async function updateEquipment(equipName:string,e:Equipment){
 
 export async function deleteEquipment(equipName:string){
     try{
-        const existingEquipment = await EquipmentModel.findOne({equipName: equipName});
+        const existingEquipment = await prisma.equipment.findUnique({
+            where:{equipName: equipName}
+        });
 
         if(!existingEquipment){
             console.log("Equipment not found");
             return null;
         }
-        await EquipmentModel.deleteOne(
-            {equipName: equipName}
-        );
+        await prisma.equipment.delete({
+            where: {equipName: equipName}
+        });
         console.log("Equipment deleted",equipName);
         return equipName;
     }catch (error){
@@ -62,7 +71,7 @@ export async function deleteEquipment(equipName:string){
 
 export async function getAllEquipment(){
     try{
-        return EquipmentModel.find();
+        return prisma.equipment.findMany();
     }catch (error){
         console.log("Error getting equipments data from the DB",error);
     }
