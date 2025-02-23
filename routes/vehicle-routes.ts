@@ -11,7 +11,8 @@ router.post("/add",async (req, res) => {
         fuelType: req.body.fuelType,
         status: req.body.status,
         remarks: req.body.remarks,
-        staffMember: req.body.staffMember
+        staffMember: req.body.staffMember,
+        isDeleted: false
     };
     try{
         const addedVehicle = await addVehicle(vehicle);
@@ -30,7 +31,8 @@ router.put("/update/:licenseNumber",async (req,res) => {
         fuelType: req.body.fuelType,
         status: req.body.status,
         remarks: req.body.remarks,
-        staffMember: req.body.staffMember
+        staffMember: req.body.staffMember,
+        isDeleted: false
     };
     try{
         const updatedVehicle = await updateVehicle(licenseNumber,vehicle);

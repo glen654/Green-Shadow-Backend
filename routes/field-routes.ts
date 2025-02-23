@@ -3,7 +3,6 @@ import multer from 'multer'
 import {addField, deleteField, getAllFieldNames, getAllFields, updateField} from "../database/field-data-store";
 import {Field} from "../models/dtos/Field";
 import {storage} from "../util/Storage";
-import FieldModel from "../models/schemas/Field-model";
 
 const router = express.Router();
 
@@ -18,7 +17,8 @@ router.post("/add", upload.single("fieldImage"), async (req, res) => {
         fieldName: req.body.fieldName,
         location: req.body.location,
         extentSize: Number(req.body.extentSize),
-        fieldImage: fieldImage
+        fieldImage: fieldImage,
+        isDeleted:false
     };
     try{
         const addedField = await addField(field);
@@ -39,7 +39,8 @@ router.put("/update/:fieldName", upload.single("fieldImage"),async (req,res) => 
         fieldName: req.body.fieldName,
         location: req.body.location,
         extentSize: Number(req.body.extentSize),
-        fieldImage: fieldImage
+        fieldImage: fieldImage,
+        isDeleted:false
     }
     try {
         const updatedField = await updateField(fieldName, field);

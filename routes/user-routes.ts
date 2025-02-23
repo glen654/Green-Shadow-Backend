@@ -20,9 +20,9 @@ router.post('/login',async (req ,res) => {
                 process.env.SECRET_ACCESS_TOKEN  as string,
                 {expiresIn: "1h"}
             );
-            res.status(200).send({access_token})
+            res.status(200).json(access_token)
         }else {
-            res.status(200).send("Invalid credentials")
+            res.status(200).json("Invalid credentials")
         }
     }catch (error){
         console.log(error)
@@ -30,29 +30,17 @@ router.post('/login',async (req ,res) => {
     }
 })
 
-router.post('/register',async (req ,res) => {
-    const user: User = {
+router.post('/register', async (req,res) => {
+    const user:User = {
         userName: req.body.userName,
         userEmail: req.body.userEmail,
         password: req.body.password
     }
-
-    try {
+    try{
         const newUser = await registerUser(user);
-        if(newUser){
-            const access_token = jwt.sign(
-                {userEmail: user.userEmail},
-                process.env.SECRET_ACCESS_TOKEN  as string,
-                {expiresIn: "1h"}
-            );
-            res.status(200).send({access_token})
-        }else{
-            res.status(400).send("User already exists or invalid data");
-        }
-        res.status(200).json(newUser);
+        res.status(200).json(newUser)
     }catch (error){
-        console.log(error);
-        res.status(400).send("Error registering register");
+        res.status(500).send("Internal server error")
     }
 })
 

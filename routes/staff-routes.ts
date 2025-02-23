@@ -14,7 +14,8 @@ router.post("/add",async (req,res)=>{
         address: req.body.address,
         contact: req.body.contact,
         email: req.body.email,
-        fieldName: req.body.fieldName
+        fieldName: req.body.fieldName,
+        isDeleted: false
     };
     try{
        const addedStaffMember = await addStaff(staff);
@@ -36,7 +37,8 @@ router.put("/update/:name",async (req,res) => {
         address: req.body.address,
         contact: req.body.contact,
         email: req.body.email,
-        fieldName: req.body.fieldName
+        fieldName: req.body.fieldName,
+        isDeleted: false
     };
     try{
         const updatedStaffMember = await updateStaff(name,staff);

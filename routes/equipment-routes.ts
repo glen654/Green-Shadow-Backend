@@ -11,7 +11,8 @@ router.post("/add",async (req, res) => {
         equipType: req.body.equipType,
         status: req.body.status,
         staffMember: req.body.staffMember,
-        fieldName: req.body.fieldName
+        fieldName: req.body.fieldName,
+        isDeleted: false
     };
     try{
         const addedEquipment = await addEquipment(equipment);
@@ -29,7 +30,8 @@ router.put("/update/:equipName",async (req,res) => {
         equipType: req.body.equipType,
         status: req.body.status,
         staffMember: req.body.staffMember,
-        fieldName: req.body.fieldName
+        fieldName: req.body.fieldName,
+        isDeleted: false
     };
     try{
         const updatedEquipment = await updateEquipment(equipName,equipment);

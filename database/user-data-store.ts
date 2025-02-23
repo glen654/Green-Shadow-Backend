@@ -7,6 +7,14 @@ const prisma = new PrismaClient();
 export async function registerUser(u:User){
     const hashPassword = await bcrypt.hash(u.password, 10);
     try{
+        const existingUser = await prisma.user.findUnique({
+            where: {userEmail: u.userEmail}
+        })
+
+        if(existingUser){
+            throw new Error("User already exists");
+        }
+
         const newUser = await prisma.user.create({
             data:{
                 userName: u.userName,

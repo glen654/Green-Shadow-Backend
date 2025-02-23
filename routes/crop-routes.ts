@@ -18,7 +18,8 @@ router.post("/add",upload.single("cropImage"), async (req, res) => {
         scientificName: req.body.scientificName,
         category: req.body.category,
         cropImage: cropImage,
-        fieldName: req.body.fieldName
+        fieldName: req.body.fieldName,
+        isDeleted: false
     };
     try{
         const addedCrop = await addCrop(crop);
@@ -40,7 +41,8 @@ router.put("/update/:commonName",upload.single("cropImage"),async (req,res) => {
         scientificName: req.body.scientificName,
         category: req.body.category,
         cropImage: cropImage,
-        fieldName: req.body.fieldName
+        fieldName: req.body.fieldName,
+        isDeleted: false
     };
     try{
         const updatedCrop = await updateCrop(commonName,crop);

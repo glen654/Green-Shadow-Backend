@@ -1,5 +1,4 @@
 import express from "express";
-import {connectDB} from "./config/db";
 import fieldRoutes from "./routes/field-routes"
 import cropRoutes from "./routes/crop-routes"
 import staffRoutes from "./routes/staff-routes"
@@ -22,9 +21,6 @@ const corsOptions = {
 app.use(express.json());
 app.use(cors(corsOptions));
 
-
-// DB Connection
-connectDB();
 
 // routes
 app.use('/auth', UserRoutes);

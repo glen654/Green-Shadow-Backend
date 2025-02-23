@@ -19,7 +19,8 @@ router.post("/add", upload.single("logImage"),async (req,res) => {
         logImage: logImage,
         fieldName: req.body.fieldName,
         cropName: req.body.cropName,
-        staffMember: req.body.staffMember
+        staffMember: req.body.staffMember,
+        isDeleted: false
     };
     try{
         const addedLog = await addLog(log);
@@ -42,7 +43,8 @@ router.put("/update/:logName", upload.single("logName"),async (req,res)=> {
         logImage: logImage,
         fieldName: req.body.fieldName,
         cropName: req.body.cropName,
-        staffMember: req.body.staffMember
+        staffMember: req.body.staffMember,
+        isDeleted: false
     };
     try{
         const updatedLog = await updateLog(logName,log);
