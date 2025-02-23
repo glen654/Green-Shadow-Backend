@@ -16,6 +16,7 @@ export async function addStaff(s:Staff){
                 contact: s.contact,
                 email: s.email,
                 fieldName: s.fieldName,
+                isDeleted: false
             }
         })
         console.log("Staff member added",newStaffMember);
@@ -28,7 +29,7 @@ export async function addStaff(s:Staff){
 export async function updateStaff(name:string,s:Staff){
     try{
         const existingStaffMember = await prisma.staff.findUnique({
-            where:{name: name}
+            where:{name: name, isDeleted:false}
         });
 
         if(!existingStaffMember){
@@ -36,7 +37,7 @@ export async function updateStaff(name:string,s:Staff){
             return null;
         }
         const updatedStaffMember = await prisma.staff.update({
-            where: {name: name},
+            where: {name: name, isDeleted: false},
             data: {
                 name: s.name || existingStaffMember.name,
                 designation: s.designation || existingStaffMember.designation,
@@ -59,7 +60,7 @@ export async function updateStaff(name:string,s:Staff){
 export async function deleteStaff(name:string){
     try{
         const existingStaffMember = await prisma.staff.findUnique({
-            where:{name: name}
+            where:{name: name, isDeleted: false}
         });
 
         if(!existingStaffMember){
@@ -67,11 +68,12 @@ export async function deleteStaff(name:string){
             return null;
         }
 
-        await prisma.staff.delete({
-            where: {name: name}
+        const deletedStaffMember = await prisma.staff.update({
+            where: {name: name},
+            data: {isDeleted: true},
         });
         console.log("Deleted staff member",name);
-        return name;
+        return deletedStaffMember;
     }catch (err){
         console.log("Error deleting staff member",err);
     }
@@ -79,7 +81,9 @@ export async function deleteStaff(name:string){
 
 export async function getAllStaff(){
     try{
-        return prisma.staff.findMany();
+        return prisma.staff.findMany({
+            where:{isDeleted:false}
+        });
     }catch (error){
         console.log("Error getting staff details from the database",error);
     }
@@ -88,6 +92,7 @@ export async function getAllStaff(){
 export async function getAllStaffNames(){
     try {
         const staffNames = await prisma.staff.findMany({
+            where:{isDeleted:false},
             select: {
                 name: true
             }

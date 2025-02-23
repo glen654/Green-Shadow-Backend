@@ -13,6 +13,7 @@ export async function addVehicle(v:Vehicle){
                 status: v.status,
                 remarks: v.remarks,
                 staffMember: v.staffMember,
+                isDeleted: false
             }
         })
         console.log("Vehicle added successfully.",newVehicle);
@@ -25,7 +26,7 @@ export async function addVehicle(v:Vehicle){
 export async function updateVehicle(licenseNumber:string,v:Vehicle){
     try{
         const existingVehicle = await prisma.vehicle.findUnique({
-            where:{licensePlateNumber: licenseNumber}
+            where:{licensePlateNumber: licenseNumber, isDeleted: false}
         });
 
         if(!existingVehicle){
@@ -33,7 +34,7 @@ export async function updateVehicle(licenseNumber:string,v:Vehicle){
             return null;
         }
         const updatedVehicle = await prisma.vehicle.update({
-            where: {licensePlateNumber: licenseNumber},
+            where: {licensePlateNumber: licenseNumber, isDeleted: false},
             data: {
                 licensePlateNumber: v.licensePlateNumber || existingVehicle.licensePlateNumber,
                 category: v.category || existingVehicle.category,
@@ -53,18 +54,19 @@ export async function updateVehicle(licenseNumber:string,v:Vehicle){
 export async function deleteVehicle(licenseNumber:string){
     try{
         const existingVehicle = await prisma.vehicle.findUnique({
-            where:{licensePlateNumber: licenseNumber}
+            where:{licensePlateNumber: licenseNumber, isDeleted: false}
         });
 
         if(!existingVehicle){
             console.log("Vehicle not found");
             return null;
         }
-        await prisma.vehicle.delete({
-            where: {licensePlateNumber: licenseNumber}
+        const deletedVehicle = await prisma.vehicle.update({
+            where: {licensePlateNumber: licenseNumber},
+            data: {isDeleted: true},
         });
         console.log("Vehicle deleted",licenseNumber);
-        return licenseNumber;
+        return deletedVehicle;
     }catch (error){
         console.log("Error deleting vehicle",error);
     }
@@ -72,7 +74,9 @@ export async function deleteVehicle(licenseNumber:string){
 
 export async function getAllVehicles(){
     try{
-        return prisma.vehicle.findMany();
+        return prisma.vehicle.findMany({
+            where: {isDeleted: false}
+        });
     }catch (error){
         console.log("Error getting vehicles data from the DB",error);
     }

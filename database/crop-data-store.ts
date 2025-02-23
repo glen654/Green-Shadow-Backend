@@ -14,6 +14,7 @@ export async function addCrop(c:Crop){
                 category: c.category,
                 cropImage: c.cropImage,
                 fieldName: c.fieldName,
+                isDeleted: false,
             }
 
         })
@@ -27,7 +28,7 @@ export async function addCrop(c:Crop){
 export async function updateCrop(commonName: string,c:Crop){
     try{
         const existingCrop = await prisma.crop.findUnique({
-            where: {commonName: commonName}
+            where: {commonName: commonName, isDeleted: false}
         });
         if(!existingCrop){
             console.log("Crop not found");
@@ -35,7 +36,7 @@ export async function updateCrop(commonName: string,c:Crop){
         }
 
         const updatedCrop = await prisma.crop.update({
-            where:{commonName: commonName},
+            where:{commonName: commonName,isDeleted: false},
             data:{
                 commonName: c.commonName || existingCrop.commonName,
                 scientificName: c.scientificName || existingCrop.scientificName,
@@ -54,7 +55,7 @@ export async function updateCrop(commonName: string,c:Crop){
 export async function deleteCrop(commonName:string){
     try{
         const existingCrop = await prisma.crop.findUnique({
-            where: {commonName: commonName}
+            where: {commonName: commonName, isDeleted: false}
         });
         if(!existingCrop) {
             console.log("Crop not found");
@@ -70,11 +71,12 @@ export async function deleteCrop(commonName:string){
                 }
             });
         }
-        await prisma.crop.delete({
+        const deletedCrop = await prisma.crop.update({
             where: {commonName: commonName},
+            data: {isDeleted: true},
         })
         console.log("Delete Crop",commonName);
-        return commonName;
+        return deletedCrop;
     }catch(err){
         console.log("Error deleting crop",err);
     }
@@ -82,7 +84,9 @@ export async function deleteCrop(commonName:string){
 
 export async function getAllCrops(){
     try{
-        return prisma.crop.findMany();
+        return prisma.crop.findMany({
+            where: {isDeleted: false}
+        });
     }catch (error){
         console.log("Error getting crop data from the database", error);
     }
@@ -91,6 +95,7 @@ export async function getAllCrops(){
 export async function getAllCropNames(){
     try{
         const cropNames = await prisma.crop.findMany({
+            where: {isDeleted: false},
             select: {
                 commonName: true
             }

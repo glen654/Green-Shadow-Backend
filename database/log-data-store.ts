@@ -15,6 +15,7 @@ export async function addLog(l:Log){
                 fieldName: l.fieldName,
                 cropName: l.cropName,
                 staffMember: l.staffMember,
+                isDeleted: false
             }
         })
         console.log("Log added", newLog);
@@ -27,7 +28,7 @@ export async function addLog(l:Log){
 export async function updateLog(logName:string,l:Log){
     try{
         const existingLog = await prisma.log.findUnique({
-            where:{logName: logName}
+            where:{logName: logName,isDeleted: false}
         });
 
         if(!existingLog){
@@ -36,7 +37,7 @@ export async function updateLog(logName:string,l:Log){
         }
 
         const updatedLog = await prisma.log.update({
-            where: {logName: logName},
+            where: {logName: logName, isDeleted: false},
             data: {
                 logName: l.logName || existingLog.logName,
                 logDate: l.logDate || existingLog.logDate,
@@ -56,7 +57,7 @@ export async function updateLog(logName:string,l:Log){
 export async function deleteLog(logName:string){
     try{
         const existingLog = await prisma.log.findUnique({
-            where:{logName: logName}
+            where:{logName: logName, isDeleted: false}
         });
 
         if(!existingLog){
@@ -73,11 +74,12 @@ export async function deleteLog(logName:string){
                 }
             });
         }
-        await prisma.log.delete({
+        const deletedLog = await prisma.log.update({
             where: {logName: logName},
+            data: {isDeleted: true}
         })
         console.log("Deleted log",logName);
-        return logName;
+        return deletedLog;
     }catch (err){
         console.log("Error deleting log",err);
     }
@@ -85,7 +87,9 @@ export async function deleteLog(logName:string){
 
 export async function getAllLogs(){
     try{
-        return prisma.log.findMany();
+        return prisma.log.findMany({
+            where: {isDeleted: false}
+        });
     }catch (error){
         console.log("Error getting log data from the database",error);
     }

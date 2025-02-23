@@ -13,6 +13,7 @@ export async function addField(f:Field) {
                 location: f.location,
                 extentSize: f.extentSize,
                 fieldImage: f.fieldImage,
+                isDeleted: false
             }
         })
         console.log("Field Added", newField);
@@ -25,7 +26,7 @@ export async function addField(f:Field) {
 export async function updateField(fieldName:string,f:Field) {
     try{
         const existingField = await prisma.field.findUnique({
-             where:{fieldName: fieldName}
+             where:{fieldName: fieldName, isDeleted: false}
         });
 
         if(!existingField) {
@@ -33,7 +34,7 @@ export async function updateField(fieldName:string,f:Field) {
             return null;
         }
         const updatedField = await prisma.field.update({
-            where: {fieldName: fieldName},
+            where: {fieldName: fieldName, isDeleted: false},
             data: {
                 fieldName: f.fieldName || existingField.fieldName,
                 location: f.location || existingField.location,
@@ -51,7 +52,7 @@ export async function updateField(fieldName:string,f:Field) {
 export async function deleteField(fieldName:string) {
     try{
         const existingField = await prisma.field.findUnique({
-            where:{fieldName: fieldName}
+            where:{fieldName: fieldName, isDeleted: false}
         });
         if(!existingField) {
             console.log("Field not found");
@@ -68,11 +69,12 @@ export async function deleteField(fieldName:string) {
                 }
             });
         }
-        await prisma.field.delete({
+        const deletedField = await prisma.field.update({
             where: {fieldName: fieldName},
+            data: {isDeleted: true},
         })
         console.log("Deleted field",fieldName);
-        return fieldName;
+        return deletedField;
     }catch (error){
         console.log("Error deleting field",error);
     }
@@ -80,7 +82,9 @@ export async function deleteField(fieldName:string) {
 
 export async function getAllFields() {
     try{
-        return prisma.field.findMany();
+        return prisma.field.findMany({
+            where: {isDeleted: false}
+        });
     }catch (error){
         console.log("Error getting field from the database",error);
     }
@@ -89,6 +93,7 @@ export async function getAllFields() {
 export async function getAllFieldNames(){
     try {
         const fieldNames = await prisma.field.findMany({
+            where: {isDeleted: false},
             select: {
                 fieldName: true
             }

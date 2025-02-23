@@ -12,6 +12,7 @@ export async function addEquipment(e:Equipment){
                 status: e.status,
                 staffMember: e.staffMember,
                 fieldName: e.fieldName,
+                isDeleted: false
             }
 
         })
@@ -25,7 +26,7 @@ export async function addEquipment(e:Equipment){
 export async function updateEquipment(equipName:string,e:Equipment){
     try{
         const existingEquipment = await prisma.equipment.findUnique({
-            where: {equipName: equipName}
+            where: {equipName: equipName, isDeleted: false}
         });
 
         if(!existingEquipment){
@@ -33,7 +34,7 @@ export async function updateEquipment(equipName:string,e:Equipment){
             return null;
         }
         const updatedEquipment = await prisma.equipment.update({
-            where: {equipName: equipName},
+            where: {equipName: equipName, isDeleted: false},
             data: {
                 equipName: e.equipName || existingEquipment.equipName,
                 equipType: e.equipType || existingEquipment.equipType,
@@ -52,18 +53,19 @@ export async function updateEquipment(equipName:string,e:Equipment){
 export async function deleteEquipment(equipName:string){
     try{
         const existingEquipment = await prisma.equipment.findUnique({
-            where:{equipName: equipName}
+            where:{equipName: equipName, isDeleted: false}
         });
 
         if(!existingEquipment){
             console.log("Equipment not found");
             return null;
         }
-        await prisma.equipment.delete({
-            where: {equipName: equipName}
+        const deletedEquipment = await prisma.equipment.update({
+            where: {equipName: equipName},
+            data: {isDeleted: true}
         });
         console.log("Equipment deleted",equipName);
-        return equipName;
+        return deletedEquipment;
     }catch (error){
         console.log("Error deleting equipment",error);
     }
@@ -71,7 +73,9 @@ export async function deleteEquipment(equipName:string){
 
 export async function getAllEquipment(){
     try{
-        return prisma.equipment.findMany();
+        return prisma.equipment.findMany({
+            where: {isDeleted: false}
+        });
     }catch (error){
         console.log("Error getting equipments data from the DB",error);
     }

@@ -10,8 +10,9 @@ export class Staff {
     contact: string;
     email: string;
     fieldName: string;
+    isDeleted: boolean;
 
-    constructor(name: string, designation: string, gender: Gender,joinedDate: Date, dob: Date, address: string, contact: string, email: string, fieldName: string) {
+    constructor(name: string, designation: string, gender: Gender,joinedDate: Date, dob: Date, address: string, contact: string, email: string, fieldName: string, isDeleted: boolean) {
         this.name = name;
         this.designation = designation;
         this.gender = gender;
@@ -21,5 +22,6 @@ export class Staff {
         this.contact = contact;
         this.email = email;
         this.fieldName = fieldName;
+        this.isDeleted = isDeleted;
     }
 }
